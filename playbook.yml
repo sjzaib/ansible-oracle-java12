@@ -1,0 +1,26 @@
+---
+- hosts: app
+  remote_user: ubuntu
+  become: yes
+
+  tasks:
+  - name: Install add-apt-repostory
+    become: yes
+    apt: name=software-properties-common state=latest
+
+  - name: Add Oracle Java Repository
+    become: yes
+    apt_repository: repo='ppa:linuxuprising/java'
+
+  - name: Accept Java 12 License
+    become: yes
+    debconf: name='oracle-java12-installer' question='shared/accepted-oracle-license-v1-2' value='true' vtype='select'
+
+  - name: Install Oracle Java 12
+    become: yes
+    apt: name={{item}} state=latest
+    with_items:
+    - oracle-java12-installer
+    - ca-certificates
+    - oracle-java12-set-default
+
